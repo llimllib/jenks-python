@@ -66,11 +66,8 @@ def get_jenks_breaks(data, lower_class_limits, n_classes):
     kclass[n_classes] = data[len(data) - 1]
     kclass[0] = data[0]
 
-    pp(kclass)
-
     while countNum > 1:
         elt = int(lower_class_limits[k][countNum] - 2)
-        print elt, data[elt]
         kclass[countNum - 1] = data[elt]
         k = int(lower_class_limits[k][countNum] - 1)
         countNum -= 1
