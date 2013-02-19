@@ -5,8 +5,8 @@ inf = float('inf')
 def jenks_init_matrices(data, n_classes):
     #fill the matrices with data+1 arrays of n_classes 0s
     lower_class_limits =    [[0.] * (n_classes+1) for i in xrange(len(data))]
-    variance_combinations = [[0.] * (n_classes+1) if i < 2 else [0.] + [inf] * n_classes
-                                                  for i in xrange(len(data))]
+    variance_combinations = [[0.] * (n_classes+1)] + [[0.] + [inf] * n_classes
+                                                      for i in xrange(len(data))]
 
     for i in xrange(1, n_classes+1):
         lower_class_limits[1][i] = 1.
