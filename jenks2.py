@@ -1,7 +1,7 @@
 import json
 from pprint import pprint as pp
 
-def jenks_matrices(data, n_classes):
+def jenks_matrices_init(data, n_classes):
     #fill the matrices with data+1 arrays of n_classes 0s
     lower_class_limits = []
     variance_combinations = []
@@ -21,12 +21,17 @@ def jenks_matrices(data, n_classes):
         for j in xrange(2, len(data)+1):
             variance_combinations[j][i] = inf
 
+    return lower_class_limits, variance_combinations
+
+def jenks_matrices(data, n_classes):
+    lower_class_limits, variance_combinations = jenks_matrices_init(data, n_classes)
+
     variance = 0.0
     for l in xrange(2, len(data)+1):
         sum = 0.0
         sum_squares = 0.0
         w = 0.0
-        for m in xrange(1,l+1):
+        for m in xrange(1, l+1):
             # `III` originally
             lower_class_limit = l - m + 1
             val = data[lower_class_limit-1]
@@ -50,7 +55,7 @@ def jenks_matrices(data, n_classes):
             if i4 != 0:
                 for j in xrange(2, n_classes+1):
                     if variance_combinations[l][j] >= (variance + variance_combinations[i4][j - 1]):
-                        lower_class_limits[l][j] = float(lower_class_limit)
+                        lower_class_limits[l][j] = lower_class_limit
                         variance_combinations[l][j] = variance + variance_combinations[i4][j - 1]
 
         lower_class_limits[l][1] = 1.
@@ -63,8 +68,8 @@ def get_jenks_breaks(data, lower_class_limits, n_classes):
     kclass = [0.] * (n_classes+1)
     countNum = n_classes
 
-    kclass[n_classes] = data[len(data) - 1]
     kclass[0] = data[0]
+    kclass[n_classes] = data[len(data) - 1]
 
     while countNum > 1:
         elt = int(lower_class_limits[k][countNum] - 2)
