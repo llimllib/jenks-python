@@ -3,11 +3,19 @@ from pprint import pprint as pp
 inf = float('inf')
 
 def jenks_init_matrices(data, n_classes):
-    #fill the matrices with data+1 arrays of n_classes 0s
-    lower_class_limits =    [[0.] * (n_classes+1) for i in xrange(len(data))]
-    variance_combinations = [[0.] * (n_classes+1)] + [[0.] + [inf] * n_classes
-                                                      for i in xrange(len(data))]
+    #where N = len(data) and K = len(n_classes)+1
+    k = n_classes + 1
 
+    #An N x K matrix of optimal lower class limits
+    lower_class_limits =    [[0.] * k for i in xrange(len(data))]
+
+    #An N x K matrix of optimal variance combinations
+    #the first row is 0s, the rest of the rows are [0, inf*K]
+    variance_combinations = [[0.] * k] + \
+                            [[0.] + [inf] * k
+                             for i in xrange(len(data))]
+
+    #the original code sets lc[0][i] to 1... figure out what this row is actually for!
     for i in xrange(1, n_classes+1):
         lower_class_limits[1][i] = 1.
 
@@ -17,11 +25,11 @@ def jenks_matrices(data, n_classes):
     lower_class_limits, variance_combinations = jenks_init_matrices(data, n_classes)
 
     variance = 0.0
-    for l in xrange(2, len(data)):
+    for l in xrange(1, len(data)):
         sum = 0.0
         sum_squares = 0.0
         w = 0.0
-        for m in xrange(1, l+1):
+        for m in xrange(l):
             # `III` originally
             lower_class_limit = l - m + 1
             val = data[lower_class_limit-1]
@@ -83,7 +91,7 @@ def jenks(data, n_classes):
 def main():
     #pp(jenks(json.load(open('test.json')), 5))
     pp(jenks_matrices([1,2,3,4,5,6,7,8,9,10], 3))
-    #pp(jenks([1,2,3,4,5,6,7,8,9,10], 3))
+    pp(jenks([1,2,3,4,5,6,7,8,9,10], 3))
 
 if __name__ == "__main__":
     main()
