@@ -77,6 +77,25 @@ def get_jenks_breaks(data, lower_class_limits, n_classes):
 
     return kclass
 
+def separate_data(data, boundaries):
+    clusters = []
+
+    cluster = []
+    boundaries.pop(0)
+    i=0
+    for d in data:
+        print "checking %s against %s %s" % (d, boundaries[i], boundaries)
+        if d <= boundaries[i]:
+           cluster.append(d)
+        else:
+            clusters.append(cluster)
+            cluster = [d]
+            i += 1
+
+    clusters.append(cluster)
+
+    return clusters
+
 def jenks(data, n_classes):
     if n_classes > len(data): return
 
@@ -85,7 +104,9 @@ def jenks(data, n_classes):
     lower_class_limits, _ = jenks_matrices(data, n_classes)
     #pp(lower_class_limits)
 
-    return get_jenks_breaks(data, lower_class_limits, n_classes)
+    boundaries = get_jenks_breaks(data, lower_class_limits, n_classes)
+
+    return separate_data(data, boundaries)
 
 
 def main():
