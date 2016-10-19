@@ -7,16 +7,16 @@ def jenks_init_matrices(data, n_classes):
     k = n_classes + 1
 
     #An N x K matrix of optimal lower class limits
-    lower_class_limits =    [[0.] * k for i in xrange(len(data))]
+    lower_class_limits =    [[0.] * k for i in range(len(data))]
 
     #An N x K matrix of optimal variance combinations
     #the first row is 0s, the rest of the rows are [0, inf*K]
     variance_combinations = [[0.] * k] + \
                             [[0.] + [inf] * k
-                             for i in xrange(len(data))]
+                             for i in range(len(data))]
 
     #the original code sets lc[0][i] to 1... figure out what this row is actually for!
-    for i in xrange(1, n_classes+1):
+    for i in range(1, n_classes+1):
         lower_class_limits[1][i] = 1.
 
     return lower_class_limits, variance_combinations
@@ -25,11 +25,11 @@ def jenks_matrices(data, n_classes):
     lower_class_limits, variance_combinations = jenks_init_matrices(data, n_classes)
 
     variance = 0.0
-    for l in xrange(1, len(data)):
+    for l in range(1, len(data)):
         sum = 0.0
         sum_squares = 0.0
         w = 0.0
-        for m in xrange(l):
+        for m in range(l):
             # `III` originally
             lower_class_limit = l - m + 1
             val = data[lower_class_limit-1]
@@ -51,7 +51,7 @@ def jenks_matrices(data, n_classes):
             i4 = lower_class_limit - 1
 
             if i4 != 0:
-                for j in xrange(2, n_classes+1):
+                for j in range(2, n_classes+1):
                     if variance_combinations[l][j] >= (variance + variance_combinations[i4][j - 1]):
                         lower_class_limits[l][j] = lower_class_limit
                         variance_combinations[l][j] = variance + variance_combinations[i4][j - 1]
@@ -84,7 +84,6 @@ def separate_data(data, boundaries):
     boundaries.pop(0)
     i=0
     for d in data:
-        print "checking %s against %s %s" % (d, boundaries[i], boundaries)
         if d <= boundaries[i]:
            cluster.append(d)
         else:
@@ -102,7 +101,6 @@ def jenks(data, n_classes):
     data.sort()
 
     lower_class_limits, _ = jenks_matrices(data, n_classes)
-    #pp(lower_class_limits)
 
     boundaries = get_jenks_breaks(data, lower_class_limits, n_classes)
 
@@ -110,8 +108,6 @@ def jenks(data, n_classes):
 
 
 def main():
-    #pp(jenks(json.load(open('test.json')), 5))
-    pp(jenks_matrices([1,2,3,4,5,6,7,8,9,10], 3))
     pp(jenks([1,2,3,4,5,6,7,8,9,10], 3))
 
 if __name__ == "__main__":
